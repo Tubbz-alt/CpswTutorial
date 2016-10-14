@@ -62,7 +62,7 @@ CInt2Dbl::createAdapter(IEntryAdapterKey &key, Path path, const std::type_info& 
 	} else if ( isInterface<DoubleVal_RO>(interfaceType) ) {
 		if ( WO == getMode() )
 			throw InterfaceNotImplementedError("Double_RO interface not supported (item is write-only)");
-		return _createAdapter<shared_ptr<CInt2DblAdapt> >(this, path);
+		return _createAdapter<shared_ptr<CInt2Dbl_ROAdapt> >(this, path);
 	}
 #ifdef ALLOW_SCALVAL_ACCESS
 	// delegate to superclass -- this allows the user to create

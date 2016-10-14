@@ -100,7 +100,7 @@ public:
 	virtual void dbl2int(uint64_t *dst, double *src, unsigned n);
 };
 
-class CInt2DblAdapt: public virtual CInt2Dbl_ROAdapt, public virtual CInt2Dbl_WOAdapt {
+class CInt2DblAdapt: public virtual CInt2Dbl_ROAdapt, public virtual CInt2Dbl_WOAdapt, public virtual IDoubleVal {
 public:
 	CInt2DblAdapt(Key &k, Path p, ConstInt2Dbl ie);
 };
