@@ -3,7 +3,7 @@ import pycpsw
 import numpy
 import threading
 
-import ModelParm as ModelParm
+import ModelParmScaled as ModelParm
 
 from PyQt4 import QtCore
 

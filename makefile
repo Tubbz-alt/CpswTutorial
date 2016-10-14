@@ -27,6 +27,9 @@ SUBDIRS += framework
 SUBDIRS += docsrc
 
 # Add PROGRAMS here (before including 'rules.mak')
+PROGRAMS        += Int2Dbl.so
+Int2Dbl_so_SRCS += int2dbl.cc
+Int2Dbl_so_LIBS  = $(CPSW_LIBS)
 
 # Include rules
 include $(CPSW_DIR)/rules.mak
