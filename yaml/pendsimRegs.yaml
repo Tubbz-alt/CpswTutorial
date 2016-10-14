@@ -1,0 +1,95 @@
+#schemaversion 3.0.0
+#once pendsimRegs.yaml
+
+# A few templates
+
+# unsigned, scaled with 2^(-32)
+pendsimRegU32: &pendsimRegU32
+  class:    [ Int2Dbl, IntField ]
+  scale: 2.32830643654e-10 # 2^-32
+
+# unsigned, scaled with 2^(-16)
+pendsimRegU16: &pendsimRegU16
+  class:    [ Int2Dbl, IntField ]
+  scale: 1.52587890625e-5  # 2^-16
+
+# unsigned, scaled with 2^(-8)
+pendsimRegU08: &pendsimRegU08
+  class:    [ Int2Dbl, IntField ]
+  fracBits:  3.90625e-3    # 2^-8
+
+# signed, scaled with 2^(-31)
+pendsimRegS32: &pendsimRegS32
+  class:    [ Int2Dbl, IntField ]
+  scale: 4.65661287308e-10 # 2^-31
+  isSigned: true
+
+# signed, scaled with 2*PI*2^(-31)
+pendsimRegSA32: &pendsimRegSA32
+  class:    [ Int2Dbl, IntField ]
+  scale: 2.92583615853e-9 # 2*PI*2^-31
+  isSigned: true
+
+# signed, scaled with 2^(-15)
+pendsimRegS16: &pendsimRegS16
+  class:    [ Int2Dbl, IntField ]
+  scale: 3.0517578125e-5   # 2^-15
+  isSigned: true
+
+# Register Definitions for Pendulum Simulator
+pendsimRegs: &pendsimRegisters
+  class: MMIODev
+  size:  0x400
+  byteOrder: LE
+  children:
+   vFriction:
+      <<: *pendsimRegU32
+      at: { offset: 0x00 }
+      description: "Viscous damping coeff. (normalized to angular inertia)"
+   kFriction:
+      <<: *pendsimRegU32
+      at: { offset: 0x04 }
+      description: "Kinetic friction coeff."
+   gOverL:
+      <<: *pendsimRegU16
+      at: { offset: 0x08 }
+      description: "g/l"
+   mOverM:
+      <<: *pendsimRegU16
+      at: { offset: 0x0c }
+      description: "Mass of pendulum divided by mass of cart (m/M)"
+   length:
+      <<: *pendsimRegU16
+      at: { offset: 0x10 }
+      description: "Length of pendulum (normalized to half of track length)"
+   pos:
+      <<: *pendsimRegS32
+      at: { offset: 0x20 }
+      description: "Position setpoint (normalized to half of track length)"
+   phi:
+      <<: *pendsimRegSA32
+      at: { offset: 0x24 }
+      description: "Rotation angle setpoint (with horiz. plane)"
+   iniVelo:
+      <<: *pendsimRegS16
+      at: { offset: 0x28 }
+      description: "Initial horiz. velocity of cart+pendulum (norm. to 1/2 track)"
+   force:
+      <<: *pendsimRegS16
+      at: { offset: 0x2c }
+      description: "Force applied to cart (normalized to (M*g))"
+   posRB:
+      <<: *pendsimRegS32
+      at: { offset: 0x30 }
+      mode:        RO  
+      description: "Position readback (normalized to half of track length)"
+   phiRB:
+      <<: *pendsimRegSA32
+      at: { offset: 0x34 }
+      mode:        RO  
+      description: "Rot. angle readback (with horiz. plane)"
+   timeRB:
+      <<: *pendsimRegU08
+      at: { offset: 0x38 }
+      mode:        RO
+      description: "Simulation time readback"

@@ -1,0 +1,59 @@
+#schemaversion 3.0.0
+
+# Protocol stack; common base shared
+# by the stream and SRP
+baseProtoConfig: &baseProtoConfig
+   TDESTMux:
+     stripHeader:   true
+   RSSI: ~
+   UDP:
+     port: 8400
+
+# SRP V3 config
+SRPProtoConfig: &SRPProtoConfig
+  <<: *baseProtoConfig
+  SRPMux:
+    virtualChannel: 0
+  SRP:
+    protocolVersion: SRP_UDP_V3
+  TDESTMux:
+    TDEST:         1
+    outQueueDepth: 1
+
+StreamProtoConfig: &StreamProtoConfig
+  <<: *baseProtoConfig
+  SRP:
+    protocolVersion: SRP_UDP_NONE
+  TDESTMux:
+    outQueueDepth: 20
+
+root:
+  class:  NetIODev
+  ipAddr: 127.0.0.1
+  children:
+    mmio:
+      class:     MMIODev
+      byteOrder: LE
+      size:      0x200000
+      at:        *SRPProtoConfig 
+      children:
+        folder:
+          class: MMIODev
+          size : 0x400
+          at: { offset: 0x000000, nelms:  2 }
+          children:
+            hello:
+              class: IntField
+              description: This is the description of hello
+              at: { offset: 0x000000, nelms: 10 }
+            menu:
+              class: IntField
+              description: A menu
+              at: { offset: 0x000001 }
+              sizeBits: 2
+              lsBit:    4
+              enums:
+                 - {name: zero , value:   0}
+                 - {name: one  , value:   1}
+                 - {name: two  , value:   2}
+                 - {name: three, value:   3}
