@@ -25,6 +25,9 @@ include $(CPSW_DIR)/defs.mak
 # Recurse into subdirectories (prior to making this directory)
 SUBDIRS += framework
 SUBDIRS += docsrc
+TGTS    += env
+
+GENERATED_SRCS += env.slac
 
 # Add SHARED_OBJS here (before including 'rules.mak')
 
@@ -37,5 +40,14 @@ clean_local:
 
 uninstall:
 	$(RM) -r bin lib include doc
+
+env: $(CPSW_DIR)/config.mak $(CPSW_DIR)/config.local.mak
+	@echo 'export LD_LIBRARY_PATH="$(abspath $(boostlib_DIR)):$(abspath $(yaml_cpplib_DIR)):$(abspath $(INSTALL_DIR)/lib/$(TARCH)):$(abspath $(pyinc_DIR)/../../lib)$${LD_LIBRARY_PATH:+:$${LD_LIBRARY_PATH}}"' > $@
+	@echo 'export PATH="$(abspath $(pyinc_DIR)/../../bin)$${PATH:+:$${PATH}}"' >> $@
+	@echo 'export PYTHONPATH="$(abspath $(INSTALL_DIR)/bin/$(TARCH))$${PYTHONPATH:+:$${PYTHONPATH}}"' >> $@
+
+env.slac:
+	$(RM) $@
+	ln -s O.$(HARCH)/env $@
 
 .PHONY: uninstall
