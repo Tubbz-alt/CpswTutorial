@@ -39,6 +39,7 @@ include $(CPSW_DIR)/rules.mak
 clean_local:
 	$(RM) -r __pycache__
 	$(RM) *.pyc
+	$(RM) env.slac
 
 uninstall:
 	$(RM) -r bin lib include doc
