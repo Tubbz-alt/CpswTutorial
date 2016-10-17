@@ -26,10 +26,16 @@ include $(CPSW_DIR)/defs.mak
 SUBDIRS += framework
 SUBDIRS += docsrc
 
-# Add PROGRAMS here (before including 'rules.mak')
+# Add SHARED_OBJS here (before including 'rules.mak')
 
 # Include rules
 include $(CPSW_DIR)/rules.mak
 
 clean_local:
 	$(RM) -r __pycache__
+	$(RM) *.pyc
+
+uninstall:
+	$(RM) -r bin lib include doc
+
+.PHONY: uninstall
