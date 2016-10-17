@@ -18,7 +18,7 @@
 \newcommand{\Paths}     {{Paths}}
 \newcommand{\git}       {{\tt{}git}}
 \newcommand{\py}        {python}
-\newcommand{\pyt}       {python3}
+\newcommand{\pyt}       {python}
 \newcommand{\udps}      {udpsrv}
 \newcommand{\cpp}       {C++}
 
@@ -94,7 +94,7 @@ knowledge of
 The user should have a fresh copy of this tutorial checked out from \git{} and built
 the version of \cpsw{} which comes with it (in the \cod{framework} subdirectory).
 
-You will need a recent toolchain and \pyt{}.
+You will need a recent toolchain and \py{}2.7 or 3.
 
 \subsection{Building \cpsw}
 The tutorial comes with its own check-out of \cpsw{} -- this allows you to browse 
@@ -107,22 +107,33 @@ First, you need to point the makefile to the locations where the libraries used 
 \begin{itemize}
 \item \cod{yaml-cpp}
 \item \cod{boost}
-\item \cod{\py3}
+\item \cod{\py}
 \end{itemize}
 For the installation at SLAC, the relevant locations of \cod{yaml-cpp} and \cod{boost}
 are already defined in the file \cod{config.mak} (in the \cod{framework} subdirectory).
-However, at the time of this writing the location of \cod{\py3} has not been defined
-and we shall do that now. Unfortunately, the predefined version of \cod{boost} is too old
-to support \cod{\py3} so we will need to point the makefiles to a more recent version.
+However, at the time of this writing the location of \cod{\py} has not been defined
+and we shall do that now.
+
+It is also important that later, when you launch \py{}, you use the same version
+of the \py{} interpreter that was used to build the \py{} \cpsw{} module.
 
 We will create a new file, \cod{config.local.mak}, (located also in the \cod{framework}
 subdirectory) from where we can override settings defined in \cod{config.mak}.
 \cod{config.local.mak} is intended to be used for local modifications which will
 never be recorded in \cod{git}.
 
-We also define a \cod{INSTALL\_DIR} in this file. These are the contents of your new
-\cod{config.local.mak}
+We also define a \cod{INSTALL\_DIR} in this file and we restrict the build to
+just the host architecture. These are the contents of your new
+\cod{config.local.mak}\footnote{We used a \cod{define} statement rather
+than a straight variable assignment for cosmetic reasons only. It allows this
+snippet of code to be properly typeset without producing overfull lines.}
 \begin{verbatim}
+INSTALL_DIR=$(CPSW_DIR)/../
+ARCHES=$(HARCH)
+define py_DIR_default
+/afs/slac/g/lcls/package/python/python2.7.9/$(TARCH)
+endef
+pyinc_DIR_default=$(py_DIR)/include/python2.7
 \end{verbatim}
 
 Now you can change back to the tutorial's top directory and type \cod{make install}.
@@ -149,10 +160,13 @@ you can simply ``source'' into the shell. You'll need to do this for every sessi
 
 \begin{verbatim}
 . env.slac
-python3
+python
 \end{verbatim}
 
-Once the \py{} interpreter is up enter:
+Note that \cod{env.slac} also adds to the \cod{PATH} environment variable so that
+the correct version of the \py{} interpreter is used.
+
+Once the interpreter is up enter:
 
 \begin{verbatim}
 import pycpsw
@@ -176,12 +190,12 @@ hardware and are independent of network configurations etc.
 
 You need, however, to start \udps{} in order to execute the examples discussed in
 the tutorial. \udps{} requires the same \cod{LD\_LIBRARY\_PATH} settings which have
-been mentioned already. In order to start the server, type
-
+been mentioned already. Open a new terminal, change directory to the tutorial's
+top and type
 \begin{verbatim}
+. env.slac
 bin/linux-x86_64/udpsrv -T 8400
 \end{verbatim}
-
 The server will open UDP port 8400 where it is listening for requests. Because
 only a single program may listen on a given port this means that only a single
 instance of \udps{} may be started using the same port number on any machine.
@@ -248,7 +262,7 @@ You can convert a \cod{Path} to a string representation:
 The numbers ``[0-1]'' and ``[0-9]'' represent {\em array bounds} which 
 are zero-based and include the last element. This means that there are
 actually two instances of `\cod{folder}' present under `\cod{mmio}' and
-and array of 10 `\cod{hello}'s in each \cod{folder} which amounts to
+an array of 10 \cod{hello}s in each \cod{folder} which amounts to
 20 \cod{hello}s total:
 
 \begin{verbatim}
@@ -774,9 +788,9 @@ can be created in an automatic fashion from \cpsw{}.
 
 \subsection{Launching the GUI}
 You can now launch the Gui and test your \cod{\mbox{ModelParm}} class. Remember that the
-environment variables discussed earlier need to be set. The scripts require \pyt{}:
+environment variables discussed earlier need to be set:
 \begin{verbatim}
-  python3 tutorialGui.py
+  python tutorialGui.py
 \end{verbatim}
 The Gui should be started from the tutorial top directory in order to locate
 dependent \yaml{} and \py{} files (including your \cod{\mbox{ModelParm.py}}).
