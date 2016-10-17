@@ -26,8 +26,8 @@ include $(CPSW_DIR)/defs.mak
 SUBDIRS += framework
 SUBDIRS += docsrc
 
-# Add PROGRAMS here (before including 'rules.mak')
-PROGRAMS        += Int2Dbl.so
+# Add SHARED_OBJS here (before including 'rules.mak')
+SHARED_OBJS     += Int2Dbl.so
 Int2Dbl_so_SRCS += int2dbl.cc
 Int2Dbl_so_LIBS  = $(CPSW_LIBS)
 
@@ -36,3 +36,9 @@ include $(CPSW_DIR)/rules.mak
 
 clean_local:
 	$(RM) -r __pycache__
+	$(RM) *.pyc
+
+uninstall:
+	$(RM) -r bin lib include doc
+
+.PHONY: uninstall
