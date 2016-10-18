@@ -329,9 +329,9 @@ Every object in the \cpsw{} hierarchy is represented by an {\em \entry{}}. \entr
 a rather high level of abstraction and provides just enough information for navigating
 the hierarchy, i.e., \cod{getName()}. For convenience, there is also \cod{getDescription()}
 which returns a description string -- if the designer of the YAML hierarchy has supplied
-one. \hubs{} are \entries{} which can contain a collection of children.
+one. {\em \hubs{}} are \entries{} which can contain a collection of children.
 
-You can obtain a handle to the \entry{} reached by a \Path{} by using \cod{tail()}
+You can obtain a handle to the \entry{} reached by a \Path{} using \cod{tail()}
 (and the \cod{up()} method which we saw before actually returns the \entry{} that
 it strips off):
 
@@ -402,7 +402,7 @@ It only selects elements 3-8 of the second `\cod{folder}':
 \begin{verbatim}
 >>> spath.toString()
 '/mmio/folder[1]/hello[3-8]'
->>> subHello = pycpsw.ScalVal.create( subHello )
+>>> subHello = pycpsw.ScalVal.create( spath )
 >>> subHello.getVal()
 [14, 15, 16, 17, 18, 19]
 \end{verbatim}
@@ -471,7 +471,9 @@ enums:
 This illustrates the following points:
 \begin{itemize}
 \item An IntField may have any bit size (up to currently 64).
-\item Its 'bits' need not be aligned with a byte boundary (lsBit: 4)
+\item Its 'bits' need not be aligned with a byte boundary (lsBit: 4). The
+      `lsBit' property defines the number of bits the least-significant bit
+      is left-shifted within `its' byte.
 \item An optional 'enum' menu can be associated with an IntField. This
       menu associates integer values with strings.
 \item Note that '\cod{menu}' starts at byte offset $1$ in the containing MMIODev.
@@ -505,6 +507,7 @@ After this glimpse we go back to \py{} and manipulate the enum:
 Now try
 \begin{verbatim}
 >>> hello.setVal(-1,fromIdx=0,toIdx=0)
+2
 >>> menu.getVal()
 ['three', 'three']
 \end{verbatim}
@@ -515,10 +518,12 @@ and \cod{menu} starts at offset 1).
 >>> hello.getSizeBits()
 32
 >>> menu.setVal('zero')
+2
 >>> for i in hello.getVal(toIdx=0):
 ...   print('{:x}'.format(i))
 ...
-ffffcfff ffffcfff
+ffffcfff
+ffffcfff
 \end{verbatim}
 The two \cod{menu} bits have now been merged into the \cod{hello} values.
 Since the byte-offset of \cod{menu} was 1 and the bit shift amounted to 4 bits
@@ -559,7 +564,7 @@ $\varphi$, can be read from ``sensors''.}
 
 The simulator provides a few memory-mapped registers which give access to the
 position readback, the setpoint for the external force as well as some parameters
-for the simulation. These registers are summarized in table~\ref{tbl:regs}.
+for the simulation. These registers are summarized in Table~\ref{tbl:regs}.
 Since 32-bit integer values are used by the simulator to represent numerical values
 these have been scaled to fit the 32-bit range. The scale factor that must be applied
 is listed for each register. On readback, a register value has to be multiplied
@@ -577,7 +582,7 @@ values for position and time and subsequent reads of these parameters yield the
 latched values. Thus, in order to obtain a consistent triple read `phiRB' {\em first}.
 
 All lengths are normalized to half of the horizontal track length which therefore
-extends from $pos=-1..+1$.
+extends from $pos = x =-1..+1$.
 
 \begin{table}[ht]
 \refstepcounter{tbls}
@@ -606,7 +611,7 @@ values.}
 \end{table}
 
 \subsection{The Beauty of YAML}
-Compiling the information given in table~\ref{tbl:regs} and writing a driver based
+Compiling the information given in Table~\ref{tbl:regs} and writing a driver based
 on it can be tedious and error-prone. Also, there is the danger that when some of
 the details change it might not be obvious how to propagate such changes into the
 driver code.
@@ -640,7 +645,7 @@ We have already used the \yaml{} description of the \udps{} server, \tutyaml{}.
 \hspace*{\fill}
 \caption{Memory map of the \udps{} server.}
 \end{table}
-From table~\ref{tbl:udpsmap} we extract the base address \cod{0x100400} of the
+From Table~\ref{tbl:udpsmap} we extract the base address \cod{0x100400} of the
 pendulum simulation. In order to incorporate the register description we need
 to:
 \begin{itemize}
@@ -710,7 +715,7 @@ Check out the readback value:
 
 Obviously, \cpsw{} has taken notice that this is a signed number (check the
 \yaml{} description which marks this register as `signed'). All we need to do
-is apply the proper scale from table~\ref{tbl:regs}:
+is apply the proper scale from Table~\ref{tbl:regs}:
 
 \begin{verbatim}
 >>> phiRB.getVal()/2**30
@@ -750,7 +755,7 @@ the parameters which can be accessed via \cpsw{}.
 which does the actual interaction with \cpsw{}. The scripts are structured such
 that this class -- which the reader is expected to implement as an exercise -- is kept
 as simple as possible. Each instance of a \cod{\mbox{ModelParm}} object shall represent
-a single parameter which interfaces to an underlying register from table~\ref{tbl:regs}.
+a single parameter which interfaces to an underlying register from Table~\ref{tbl:regs}.
 
 \begin{enumerate}
 \item Create a file `\cod{ModelParm.py}' where you implement the \cod{\mbox{ModelParm}} class.
@@ -759,7 +764,7 @@ a single parameter which interfaces to an underlying register from table~\ref{tb
     \begin{itemize}
     \item `\cod{prefix}' which is a reference to a \cpsw{} \Path{} object leading
           to the \cod{pendsim} device which was defined in \yaml{}.
-    \item `\cod{name}', the name of the register (see table~\ref{tbl:regs}).
+    \item `\cod{name}', the name of the register (see Table~\ref{tbl:regs}).
     \end{itemize}
     The constructor should create a `DoubleVal' (setpoints) or `DoubleVal\_RO' for
     readbacks, respectively, and store the reference in the \cod{\mbox{ModelParm}}'s
@@ -767,11 +772,11 @@ a single parameter which interfaces to an underlying register from table~\ref{tb
 \item Define a `\cod{getDescription()}' method which calls the associated DoubleVal's
     \cod{getDescription()} method and propagates the returned description string.
 \item Define a `\cod{getVal()}' method which calls the associated DoubleVal's
-    \cod{getVal} method, applies the appropriate scale factor from table~\ref{tbl:regs}
+    \cod{getVal} method, applies the appropriate scale factor from Table~\ref{tbl:regs}
     and returns the scaled value.
 \item Define a `\cod{setVal()}' method which takes (in addition to the usual \cod{self})
     a single (float) argument which needs to be scaled by the factor from
-    table~\ref{tbl:regs} and passed down to the associated DoubleVal's \cod{setVal()}.
+    Table~\ref{tbl:regs} and passed down to the associated DoubleVal's \cod{setVal()}.
 \end{enumerate}
 
 It is worthwhile studying the section of the constructor of the \cod{Model} class
@@ -808,11 +813,11 @@ readback our application may `{\em listen}' to a stream.
 
 The simulator provides (unsolicited) readings of the simulation time, the pendulum
 angle and the horizontal position over a streaming interface. The data format
-of the streamed message is shown in table~\ref{tbl:strmmsg}. The time, angle and
+of the streamed message is shown in Table~\ref{tbl:strmmsg}. The time, angle and
 position are stored in {\em little-endian} byte-order as 64-bit, fixed-point numbers
 which can be converted into floating-point representation by division by $2^{32}$.
 Note that this scale factor is common to all elements and {\em different} from the
-scales in table~\ref{tbl:regs}.
+scales in Table~\ref{tbl:regs}.
 
 \begin{table}[ht]
 \refstepcounter{tbls}
@@ -883,8 +888,8 @@ the stream's `\cod{read()}` (or `\cod{write()}`) method.
 In \pyt{} we may use an \cod{array} object (\cod{numpy.ndarray} is another option).
 Since we are dealing with three 64-bit numbers we create an array of quads:
 \begin{verbatim}
->>> import array
->>> data=array.array('q', (0 for i in range(0,3)))
+>>> import numpy
+>>> data=numpy.ndarray(3,dtype=numpy.int64)
 \end{verbatim}
 and read from the stream (the return value is the number of bytes read):
 \begin{verbatim}
@@ -895,7 +900,7 @@ Note that the \cod{data} array now contains the raw data. If the host computer d
 use `little-endian' representation then the raw data need to be byte-swapped.
 
 We extract the angle and convert to a floating point number (see
-table~\ref{tbl:strmmsg}):
+Table~\ref{tbl:strmmsg}):
 \begin{verbatim}
 >>> phi = float(data[1])/2.**32
 -1.5706
@@ -973,7 +978,7 @@ stream fed by \udps{} into \cod{UdpsrvInterface.py}.
 
       If the read-operation is successful then the method shall return a tuple with
       three floating-point values: $time$, $angle$ and $position$ in that order. 
-      These values shall be properly scaled (see table~\ref{tbl:strmmsg}).
+      These values shall be properly scaled (see Table~\ref{tbl:strmmsg}).
 
       Optionally, byte-swapping shall be performed -- if required as determined
       by \cod{\_\_init\_\_()} -- on the array elements (before converting them into
@@ -1048,7 +1053,8 @@ is a object which contains dynamic information (such as the \Path{}
 from which an {\em interface} is created) and it ``glues'' the implementation of
 an {\em interface} to an {\em entry} (``Association'' in \figr{classhier}).
 Thus, an implementation of an \entry{} in \cpsw{} usually comes as a {\em pair} or
-even {\em set} of classes: one class which implements the static aspects and an
+even {\em set} of classes: one class which implements the static aspects such as
+interfacing to \yaml{}  and an
 {\em Adapter} class for each supported {\em interface} (alternatively, there could
 also be a single {\em Adapter} which implements multiple {\em interfaces} -- e.g.,
 \cod{CScalVal\_ROAdapt} in \figr{classhier} implements IScalVal\_RO as well
@@ -1115,7 +1121,9 @@ already provides. There is some boilerplate code:
       reference which identifies the {\em interface} the user wants to create.
       The method should inspect this argument and decide if any {\em Adapter}
       implements the desired interface and create a new {\em Adapter} object if this
-      is the case. Otherwise, the method should chain to the superclass.
+      is the case. Otherwise, the method should chain to the superclass (it may also
+      decide {\em not} to defer to the superclass if it doesn't want to expose the
+      more generic features of the superclass).
 \item Every subclass of Entry should add itself to the \cpsw{} class registry by
       expanding the macro \cod{DECLARE\_YAML\_FIELD\_FACTORY()}. Note that this
       macro must be expanded from a file which is being linked (not an issue if
@@ -1141,10 +1149,13 @@ store the necessary \Path{} and/or ScalVal references in the {\em Adapter} objec
 Add the following lines to the \cod{makefile} in the tutorial top directory. This
 will result in a shared object \cod{Int2Dbl.so} being built (after typing \cod{make}). 
 \begin{verbatim}
-PROGRAMS        += Int2Dbl.so
+SHARED_OBJS     += Int2Dbl.so
 Int2Dbl_so_SRCS += int2dbl.cc
 Int2Dbl_so_LIBS  = $(CPSW_LIBS)
 \end{verbatim}
+In order for the shared object to be found in the \cod{LD\_LIBRARY\_PATH} defined
+by \cod{env.slac} the object must be installed (\cod{make install}).
+
 For more information about the \cpsw{} makefile system consult \cite{makefile, INSTALL}.
 
 \subsection{Cleaning Up ``ModelParm.py''}
@@ -1167,6 +1178,27 @@ command to use ModelParmScaled.py instead of ModelParm.py:
 import ModelParmScaled.py as ModelParm
 \end{verbatim}
 Launch the TutorialGui.py again and verify that it is working.
+
+\subsection{Controller}
+If you initialize the pendulum position so that it is approximately vertical
+then you will notice that it will ``magically'' stabilize at $\varphi=\pi/2, x=0$.
+
+tutorialGui.py implements a trivial state-space controller (based on the
+default parameters of the simulation). The controller uses a linear approximation
+which is only suitable as long as the pendulum does not deviate too far
+from $\varphi=\pi/2$. If the excursion exceeds a limit then the controller
+is disabled.
+
+It is left to the reader to add Gui elements to interact with the controller
+and/or to improve the algorithm. The reader could also try to port the controller
+to a \cpp{} class which shall be bound to the `pendsim' device transparently.
+(Hint: the driver could derive from MMIODev and its {\em Adapter} class
+could hold DoubleVal and Stream references and interact with these. The 
+\yaml{} 'class' property of the pendsim device could list the new driver
+class.)
+
+\section{Solutions to Exercises}
+Check out the `solutions' branch from \git{}.
 
 \section{Further Reading}
 
