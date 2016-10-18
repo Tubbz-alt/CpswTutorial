@@ -27,23 +27,28 @@ include $(CPSW_DIR)/defs.mak
 
 # A rule is already present for generating a header containing
 # the git version string
+GENERATED_SRCS += O.Common/gitversion.tex
 GENERATED_SRCS += O.Common/cpswTutorial.pdf
 
 include $(CPSW_DIR)/rules.mak
 
 # include your own rules here
 
-O.Common/cpswTutorial.pdf: cpswTutorial.tex O.Common $(patsubst %.fig,O.Common/%.pdf,$(wildcard *.fig))
+O.Common/cpswTutorial.pdf: cpswTutorial.tex O.Common/gitversion.tex O.Common $(patsubst %.fig,O.Common/%.pdf,$(wildcard *.fig))
 
 O.Common:
 	mkdir -p $@
 
-O.Common/%.pdf: %.tex
+O.Common/%.pdf: %.tex O.Common
 	pdflatex -output-directory O.Common $<
 	pdflatex -output-directory O.Common $<
 
-O.Common/%.pdf: %.fig
-	fig2dev -Lpdf $^ $@
+O.Common/%.pdf: %.fig O.Common
+	fig2dev -Lpdf $< $@
+
+O.Common/gitversion.tex: O.Common
+	$(RM) $@
+	echo "$(GIT_VERSION_STRING)" > $@
 
 install_local: $(SRCDIR)/O.Common/cpswTutorial.pdf
 	@if [ -n "$(INSTALL_DIR)" ]; then \
