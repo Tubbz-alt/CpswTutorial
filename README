@@ -1,0 +1,6 @@
+To generate the tutorial PDF file from a git checkout
+you need 
+  - pdflatex
+  - fig2dev
+
+Type 'make doc' which generates doc/cpswTutorial.pdf
