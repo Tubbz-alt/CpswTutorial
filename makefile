@@ -33,6 +33,9 @@ SHARED_OBJS     += Int2Dbl.so
 Int2Dbl_so_SRCS += int2dbl.cc
 Int2Dbl_so_LIBS  = $(CPSW_LIBS)
 
+# default target
+install:
+
 # Include rules
 include $(CPSW_DIR)/rules.mak
 
