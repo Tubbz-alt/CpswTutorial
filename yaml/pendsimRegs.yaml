@@ -46,10 +46,6 @@ pendsimRegs: &pendsimRegisters
       <<: *pendsimRegU32
       at: { offset: 0x00 }
       description: "Viscous damping coeff. (normalized to angular inertia)"
-   kFriction:
-      <<: *pendsimRegU32
-      at: { offset: 0x04 }
-      description: "Kinetic friction coeff."
    gOverL:
       <<: *pendsimRegU16
       at: { offset: 0x08 }
