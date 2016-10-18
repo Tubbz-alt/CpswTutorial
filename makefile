@@ -31,6 +31,9 @@ GENERATED_SRCS += env.slac
 
 # Add SHARED_OBJS here (before including 'rules.mak')
 
+# default target
+install:
+
 # Include rules
 include $(CPSW_DIR)/rules.mak
 
