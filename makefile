@@ -42,6 +42,9 @@ clean_local:
 uninstall:
 	$(RM) -r bin lib include doc
 
+doc: sub-./docsrc@install_local
+	@true
+
 env: $(CPSW_DIR)/config.mak $(CPSW_DIR)/config.local.mak
 	@echo 'export LD_LIBRARY_PATH="$(abspath $(boostlib_DIR)):$(abspath $(yaml_cpplib_DIR)):$(abspath $(INSTALL_DIR)/lib/$(TARCH)):$(abspath $(pyinc_DIR)/../../lib)$${LD_LIBRARY_PATH:+:$${LD_LIBRARY_PATH}}"' > $@
 	@echo 'export PATH="$(abspath $(pyinc_DIR)/../../bin)$${PATH:+:$${PATH}}"' >> $@
