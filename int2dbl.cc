@@ -73,12 +73,10 @@ CInt2Dbl::createAdapter(IEntryAdapterKey &key, Path path, const std::type_info& 
 	// This could be prohibited by not delegating to CIntEntryImpl
 	// and either delegating to CEntryImpl (stream interface) or
 	// returning a NULL shared-pointer (no other interfaces).
-    //
-    // HOWEVER: since CScalVal_ROAdapt/CScalVal_WOAdapt are bases of
-	//          out adapters they could always use dynamic_pointer_cast() and
-	//          obtain a ScalVal_RO/ScalVal interface handle.
-	//          To avoid this 'loophole' we could create additional
-	//          wrapper classes...
+	if ( isInterface<Val_Base>(interfaceType) || isInterface<ScalVal_Base>(interfaceType) ) {
+		// still give access to Val_Base and ScalVal_Base
+		return _createAdapter< shared_ptr<IIntEntryAdapt> >(this, path);
+	}
 	return EntryAdapt();
 #endif
 }
