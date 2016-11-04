@@ -85,26 +85,48 @@ CInt2Dbl::createAdapter(IEntryAdapterKey &key, Path path, const std::type_info& 
 
 // Actual uint64_t/int64_t <-> double conversion functions
 void
+CInt2Dbl_ROAdapt::dbl2dbl(double *dst, unsigned nelms)
+{
+ConstInt2Dbl entry = static_pointer_cast<ConstInt2Dbl::element_type>(ie_);
+double       scale = entry->getScale();
+double       off   = entry->getOffset();
+
+	for (unsigned i = 0; i <nelms; i++) {
+		dst[i] = dst[i] * scale + off;
+	}
+}
+
+void
 CInt2Dbl_ROAdapt::int2dbl(double *dst, uint64_t *src, unsigned nelms)
 {
 ConstInt2Dbl entry = static_pointer_cast<ConstInt2Dbl::element_type>(ie_);
-double     scale = entry->getScale();
-double     off   = entry->getOffset();
-uint64_t  ioff   = entry->getIntOffset();
+uint64_t     ioff  = entry->getIntOffset();
 
 	if ( isSigned() ) {
 		int64_t sioff = ioff;
-		for (unsigned i = 0; i <nelms; i++) {
+		for ( unsigned i = 0; i <nelms; i++ ) {
 			int64_t ival = src[i];
-			dst[i] = ((double)(ival + sioff)) * scale + off;
+			dst[i] = (double)(ival + sioff);
 		}
 	} else {
-		for (unsigned i = 0; i <nelms; i++) {
+		for ( unsigned i = 0; i <nelms; i++ ) {
 			uint64_t ival = src[i];
-			dst[i] = ((double)(ival + ioff)) * scale + off;
+			dst[i] = (double)(ival + ioff);
 		}
 	}
 
+}
+
+void
+CInt2Dbl_WOAdapt::dbl2dbl(double *dst, unsigned nelms)
+{
+ConstInt2Dbl entry = static_pointer_cast<ConstInt2Dbl::element_type>(ie_);
+double       scale = entry->getScale();
+double       off   = entry->getOffset();
+
+	for ( unsigned i=0; i<nelms; i++ ) {
+		dst[i] = (dst[i] - off)/scale;
+	}
 }
 
 void
@@ -112,19 +134,17 @@ CInt2Dbl_WOAdapt::dbl2int(uint64_t *dst, double *src, unsigned nelms)
 {
 ConstInt2Dbl entry = static_pointer_cast<ConstInt2Dbl::element_type>(ie_);
 
-double     scale = entry->getScale();
-double     off   = entry->getOffset();
-uint64_t  ioff   = entry->getIntOffset();
+uint64_t    ioff   = entry->getIntOffset();
 
-uint64_t  shft   = entry->getSizeBits() - (entry->isSigned() ? 1 : 0 );
+uint64_t    shft   = entry->getSizeBits() - (entry->isSigned() ? 1 : 0 );
 
-double    dlim   = exp2( shft );
-uint64_t  imax   = shft >= 64 ? 0xffffffffffffffff : (((uint64_t)1) << shft) - 1;
+double      dlim   = exp2( shft );
+uint64_t    imax   = shft >= 64 ? 0xffffffffffffffff : (((uint64_t)1) << shft) - 1;
 
 	if ( isSigned() ) {
 		double sioff = (int64_t)ioff;
-		for (unsigned i = 0; i <nelms; i++) {
-			double  dval = round( (src[i] - off) / scale ) - sioff;
+		for ( unsigned i = 0; i <nelms; i++ ) {
+			double  dval = round( src[i] ) - sioff;
 			int64_t v;
 
 			// saturate
@@ -140,8 +160,8 @@ uint64_t  imax   = shft >= 64 ? 0xffffffffffffffff : (((uint64_t)1) << shft) - 1
 		}
 	} else {
 		double sioff = ioff;
-		for (unsigned i = 0; i <nelms; i++) {
-			double   dval = round( (src[i] - off) / scale ) - sioff;
+		for ( unsigned i = 0; i <nelms; i++ ) {
+			double   dval = round( src[i] ) - sioff;
 			uint64_t v;
 
 			// saturate
@@ -159,21 +179,21 @@ uint64_t  imax   = shft >= 64 ? 0xffffffffffffffff : (((uint64_t)1) << shft) - 1
 
 CInt2Dbl_ROAdapt::CInt2Dbl_ROAdapt(Key &k, Path p, shared_ptr<const CInt2Dbl> ie)
 : IIntEntryAdapt(k, p, ie),
-  CScalVal_ROAdapt(k, p, ie)
+  CDoubleVal_ROAdapt(k, p, ie)
 {
 }
 
 CInt2Dbl_WOAdapt::CInt2Dbl_WOAdapt(Key &k, Path p, shared_ptr<const CInt2Dbl> ie)
 : IIntEntryAdapt(k, p, ie),
-  CScalVal_WOAdapt(k, p, ie)
+  CDoubleVal_WOAdapt(k, p, ie)
 {
 }
 
 CInt2DblAdapt::CInt2DblAdapt(Key &k, Path p, shared_ptr<const CInt2Dbl> ie)
 : IIntEntryAdapt(k, p, ie),
-  CScalVal_ROAdapt(k, p, ie),
+  CDoubleVal_ROAdapt(k, p, ie),
   CInt2Dbl_ROAdapt(k, p, ie),
-  CScalVal_WOAdapt(k, p, ie),
+  CDoubleVal_WOAdapt(k, p, ie),
   CInt2Dbl_WOAdapt(k, p, ie)
 {
 } 

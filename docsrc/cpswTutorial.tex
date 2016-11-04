@@ -1064,9 +1064,15 @@ The hierarchy of implementation- and interface-classes is depicted in \figr{clas
 
 The class CIntEntryImpl and its associated {\em Adapter}s (dark grey box
 at the bottom left of \figr{classhier})
-are defined in the files \cod{cpsw\_sval.h} and \cod{cpsw\_sval.cc}. CScalVal\_ROAdapt
+are defined in the files \cod{cpsw\_sval.h} and \cod{cpsw\_sval.cc}. CDoubleVal\_ROAdapt
 has a virtual \cod{int2dbl()} method for conversion of integers to floating-point values and
-CScalVal\_WOAdapt declares a virtual \cod{dbl2int()} method for the inverse operation.
+the companion class CDoubleVal\_WOAdapt declares a virtual \cod{dbl2int()} method for the
+inverse operation.  There are also \cod{dbl2dbl()} methods which operate on the double
+values after conversion from integer and prior to converting to integer, respectively.
+The conversion is broken up into two steps (\cod{int2dbl}/\cod{dbl2dbl}) so that
+registers which already present floating-point encoded values (and which thus
+don't require \cod{int2dbl}) can still be transformed.
+
 The default implementation just performs a one-to-one transformation. These methods are
 thus obvious candidates to be overridden, extending the functionality from a one-to-one
 relation to an arbitrary linear transformation with configurable ``scale'' and
