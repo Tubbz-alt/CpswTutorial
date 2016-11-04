@@ -85,19 +85,21 @@ public:
 };
 
 // Adapters could hold run-time state information;
-class CInt2Dbl_ROAdapt: public virtual CScalVal_ROAdapt {
+class CInt2Dbl_ROAdapt: public virtual CDoubleVal_ROAdapt {
 public:
 	CInt2Dbl_ROAdapt(Key &k, Path p, ConstInt2Dbl ie);
 
 	virtual void int2dbl(double *dst, uint64_t *src, unsigned n);
+	virtual void dbl2dbl(double *dst, unsigned n);
 };
 
 // Adapters could hold run-time state information;
-class CInt2Dbl_WOAdapt: public virtual CScalVal_WOAdapt {
+class CInt2Dbl_WOAdapt: public virtual CDoubleVal_WOAdapt {
 public:
 	CInt2Dbl_WOAdapt(Key &k, Path p, ConstInt2Dbl ie);
 
 	virtual void dbl2int(uint64_t *dst, double *src, unsigned n);
+	virtual void dbl2dbl(double *dst, unsigned n);
 };
 
 class CInt2DblAdapt: public virtual CInt2Dbl_ROAdapt, public virtual CInt2Dbl_WOAdapt, public virtual IDoubleVal {
