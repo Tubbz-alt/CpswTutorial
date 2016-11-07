@@ -57,7 +57,7 @@ of the hierarchy and offers the user access via the {\em \cpsw{} User API}.
 In this API the hierarchy is represented as a hierarchy of nodes (``{\em \entries}'')
 and the hierarchy is navigated by means of ``\Path{}'' objects. All \entries{} have
 {\em names} and can be located by name lookup. Hierarchies are built out of container-
-elementsi -- so called \hub{}s -- and leaf nodes.
+elements -- so called \hub{}s -- and leaf nodes.
 
 Some of the \entries{} implement {\em interfaces}. These interfaces offer additional
 functionality such as reading or writing values, executing commands or reading bulk data.
@@ -159,6 +159,7 @@ The file \cod{env.slac} contains suitable definitions for the \cod{bash} shell w
 you can simply ``source'' into the shell. You'll need to do this for every session:
 
 \begin{verbatim}
+bash
 . env.slac
 python
 \end{verbatim}
@@ -286,7 +287,7 @@ It is possible to select only a subset of array elements:
 Thus, a \Path{} identifies not only a hierarchical ``address''
 of an entity but also defines multiple levels of array bounds.
 
-A \Path{} can be dupliceted with `\cod{clone()}' and its last element
+A \Path{} can be duplicated with `\cod{clone()}' and its last element
 can be stripped with `\cod{up()}':
 
 \begin{verbatim}
