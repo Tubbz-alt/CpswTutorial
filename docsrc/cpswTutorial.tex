@@ -493,7 +493,25 @@ byteOrder: BE
 bitSize: 12
 lsBit: 4
 \end{verbatim}
+      The register layout is depicted in \figr{byteorder} along with the corresponding
+      little-endian configuration:
+\begin{verbatim}
+at: { offset: 0 }
+byteOrder: LE
+bitSize: 12
+lsBit: 4
+\end{verbatim}
+	  As it can be seen, in both cases, the offset defines the byte-offset of the
+      lowest byte in memory overlapping the IntField and the shift defined by `lsBit` 
+      is the amount by which the least-significant bit is left-shifted with respect
+      to the byte boundary, regardless of the byte-order.
 \end{itemize}
+
+\begin{figure}[ht]
+\fig{0.95\textwidth}{O.Common/byteorder.pdf}
+\label{fig:byteorder}
+\caption{A 12-bit register with its most-significant bit aligned on a byte boundary. Shown in big- and little-endian layout.}
+\end{figure}
 
 \subsubsection{Trying an Enum Menu}
 After this glimpse we go back to \py{} and manipulate the enum:
