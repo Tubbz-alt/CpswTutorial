@@ -9,5 +9,5 @@ if [ ! -f .git/hooks/post-merge ]; then
 fi
 git submodule update --init --recursive
 echo 'pyinc_DIR_linux_x86_64=/opt/TWWfsw/python27/include/python2.7/' >> framework/config.local.mak
-echo "INSTALL_DIR=`pwd`" >> framework/config.local.mak
+echo "INSTALL_DIR=`pwd`" > release.mak
 make doc
