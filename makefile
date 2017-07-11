@@ -50,7 +50,7 @@ doc: sub-./docsrc@install_local
 
 doc: INSTALL_DIR=$(CPSW_DIR)/../
 
-env: $(CPSW_DIR)/config.mak $(CPSW_DIR)/config.local.mak
+env: $(CPSW_DIR)/config.mak $(wildcard $(CPSW_DIR)/config.local.mak)
 	@echo 'export LD_LIBRARY_PATH="$(abspath $(boostlib_DIR)):$(abspath $(yaml_cpplib_DIR)):$(abspath $(INSTALL_DIR)/lib/$(TARCH)):$(abspath $(pyinc_DIR)/../../lib)$${LD_LIBRARY_PATH:+:$${LD_LIBRARY_PATH}}"' > $@
 	@echo 'export PATH="$(abspath $(pyinc_DIR)/../../bin)$${PATH:+:$${PATH}}"' >> $@
 	@echo 'export PYTHONPATH="$(abspath $(INSTALL_DIR)/bin/$(TARCH))$${PYTHONPATH:+:$${PYTHONPATH}}"' >> $@
