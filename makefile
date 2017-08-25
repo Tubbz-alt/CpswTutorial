@@ -45,8 +45,6 @@ clean_local:
 doc: sub-./docsrc@install_local
 	@true
 
-doc: INSTALL_DIR=$(CPSW_DIR)/../
-
 env: $(CPSW_DIR)/../config.mak $(wildcard $(CPSW_DIR)/../config.local.mak)
 	@echo 'export LD_LIBRARY_PATH="$(abspath $(boostlib_DIR)):$(abspath $(yaml_cpplib_DIR)):$(abspath $(INSTALL_DIR)/$(TARCH)/lib):$(abspath $(pyinc_DIR)/../../lib)$${LD_LIBRARY_PATH:+:$${LD_LIBRARY_PATH}}"' > $@
 	@echo 'export PATH="$(abspath $(pyinc_DIR)/../../bin)$${PATH:+:$${PATH}}"' >> $@
