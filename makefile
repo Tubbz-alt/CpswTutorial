@@ -11,7 +11,7 @@
 
 # Locate CPSW:
 
-CPSW_DIR=framework
+CPSW_DIR=framework/src
 
 # from 'release.mak' CPSW_DIR and other variables
 # which define package locations may be overridden.
@@ -42,21 +42,21 @@ clean_local:
 	$(RM) *.pyc
 	$(RM) env.slac
 
-uninstall:
-	$(RM) -r bin lib include doc
-
 doc: sub-./docsrc@install_local
 	@true
 
 doc: INSTALL_DIR=$(CPSW_DIR)/../
 
-env: $(CPSW_DIR)/config.mak $(wildcard $(CPSW_DIR)/config.local.mak)
-	@echo 'export LD_LIBRARY_PATH="$(abspath $(boostlib_DIR)):$(abspath $(yaml_cpplib_DIR)):$(abspath $(INSTALL_DIR)/lib/$(TARCH)):$(abspath $(pyinc_DIR)/../../lib)$${LD_LIBRARY_PATH:+:$${LD_LIBRARY_PATH}}"' > $@
+env: $(CPSW_DIR)/../config.mak $(wildcard $(CPSW_DIR)/../config.local.mak)
+	@echo 'export LD_LIBRARY_PATH="$(abspath $(boostlib_DIR)):$(abspath $(yaml_cpplib_DIR)):$(abspath $(INSTALL_DIR)/$(TARCH)/lib):$(abspath $(pyinc_DIR)/../../lib)$${LD_LIBRARY_PATH:+:$${LD_LIBRARY_PATH}}"' > $@
 	@echo 'export PATH="$(abspath $(pyinc_DIR)/../../bin)$${PATH:+:$${PATH}}"' >> $@
-	@echo 'export PYTHONPATH="$(abspath $(INSTALL_DIR)/bin/$(TARCH))$${PYTHONPATH:+:$${PYTHONPATH}}"' >> $@
+	@echo 'export PYTHONPATH="$(abspath $(INSTALL_DIR)/$(TARCH)/bin)$${PYTHONPATH:+:$${PYTHONPATH}}"' >> $@
+
+uninstall_doc:
+	$(RM) doc
 
 env.slac:
 	$(RM) $@
 	ln -s O.$(HARCH)/env $@
 
-.PHONY: uninstall
+.PHONY: env doc
