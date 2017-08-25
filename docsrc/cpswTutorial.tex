@@ -899,8 +899,8 @@ Now open the \tutyaml{} file and add the following definition {\em as a sibling 
 \subsection{Reading from a Stream}
 With the streaming interface now defined in \yaml{} we can proceed to exercise
 the stream.  Begin with loading the \tutyaml{} file into \py{} (see
-section~\ref{sec:firststeps}).  A streaming interface is -- like any other interface
-in \cpsw{} -- opened from a \Path{}:
+section~\ref{sec:firststeps}).  A streaming interface is -- similar to any other interface
+in \cpsw{} -- opened from a \Path{}.
 \begin{verbatim}
 >>> strm=pycpsw.Stream.create(
 ...             root.findByName("pendsimStream")
@@ -918,21 +918,50 @@ Since we are dealing with three 64-bit numbers we create an array of quads:
 \end{verbatim}
 and read from the stream (the return value is the number of bytes read):
 \begin{verbatim}
->>> strm.read(data)
+>>> with strm:
+...   strm.read(data)
+...
 24
 \end{verbatim}
 Note that the \cod{data} array now contains the raw data. If the host computer does not
 use `little-endian' representation then the raw data need to be byte-swapped.
 
+Note that you cannot read from the stream without a \cod{with} statement:
+\begin{verbatim}
+>>> strm.read(data)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+pycpsw.FailedStreamError: Stream can only be used from the block of a 'with' statement!
+>>> 
+\end{verbatim}
+
 We extract the angle and convert to a floating point number (see
 Table~\ref{tbl:strmmsg}):
 \begin{verbatim}
 >>> phi = float(data[1])/2.**32
+>>> phi
 -1.5706
 \end{verbatim}
 The pendulum is apparently hanging in its equilibrium position.
 
 \subsubsection{A ``Strange Phenomenon''}
+Why did we have to use the \cod{with} construct for reading from the stream?
+Let's explore this in more detail. First, we want to be able to execute
+individual steps inside \cod{with} interactively. To that end we start a
+sub-interpreter:
+\begin{verbatim}
+import code
+with strm:
+...  code.interact(local=locals())
+...
+\end{verbatim}
+After terminating the empty continuation line you are now in a sub-shell
+``inside'' the with statement. You can now read the stream directly:
+\begin{verbatim}
+>>> strm.read(data)
+24
+\end{verbatim}
+
 From the same session that uses the streaming interface you could now try to
 read the angle from the corresponding readback register:
 \begin{verbatim}
@@ -958,10 +987,15 @@ However, as a side-effect, register transactions are also stalled.
 To remedy the situation we can {\em close} the streaming interface. In the \cpp{} API
 this is achieved by releasing all shared pointers to the stream in question.
 In \py{} this is not necessarily enough since garbage collection 
-may happen at a later time but the C\py{} implementation apparently does release
-the underlying shared pointer immediately:
+may happen at a later time. Therefore the need for the \cod{with} statement
+and a python ``context manager'' which closes the stream at a well-defined
+point, namely when the \cod{with} block ends. Remember now that we are
+still inside the sub-interpreter nested into the \cod{with} block. If we terminate
+the sub-interpreter by hitting \cod{Ctrl-D} then we leave the \cod{with} block,
+release the stream and are able to 
 \begin{verbatim}
->>>del(strm)
+>>> <Ctrl-D>
+>>>
 >>>float(phiRB.getVal())/2.**30*3.141592659
 -1.5707972482125554
 \end{verbatim}
@@ -972,8 +1006,12 @@ The lesson to be learned here:
 \item Consume all streamed data.
 \item Release all shared pointers to a streaming interface when you no longer
       need it.
-\item In \py{} you should avoid creating unused streams; closing may depend
-      on unspecified/implementation-defined semantics. 
+\item In \py{} you can access streams only inside a \cod{with} block. Typically
+      such a block contains a read-loop.
+
+      In \py{} \cod{Stream.create()} actually creates a so-called ``context-manager''
+      which manages the underlying \cpp{} object, creating and destroying it
+      whenever the context is entered or left, respectively.
 \end{itemize}
 
 \subsection{Exercise}
