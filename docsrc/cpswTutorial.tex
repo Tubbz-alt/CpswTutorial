@@ -931,7 +931,8 @@ Note that you cannot read from the stream without a \cod{with} statement:
 >>> strm.read(data)
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
-pycpsw.FailedStreamError: Stream can only be used from the block of a 'with' statement!
+pycpsw.FailedStreamError: Stream can only be...
+used from the block of a 'with' statement!
 >>> 
 \end{verbatim}
 
@@ -1046,6 +1047,16 @@ stream fed by \udps{} into \cod{UdpsrvInterface.py}.
       Optionally, byte-swapping shall be performed -- if required as determined
       by \cod{\_\_init\_\_()} -- on the array elements (before converting them into
       floats).
+\item The class shall redirect \cod{\_\_enter\_\_()} and \cod{\_\_exit\_\_()}
+      methods to the stream member. E.g., if the stream created during
+      \cod{\_\_init\_\_()} is stored in \cod{self.strm\_} then
+      \begin{verbatim}
+def __enter__(self):
+  return self.strm_.__enter__()
+
+def __exit__(self, a, b, c):
+  return self.strm_.__exit__(a, b, c)
+      \end{verbatim}
 \end{enumerate}
 Use \cite{userapi} and/or \py{} \cod{help()} for more information about the Stream
 interface's \cod{read()} method as well as other details you might need to know.
