@@ -85,10 +85,11 @@ class Model(QtCore.QThread):
   def run(self):
     if self.stream:
       # use stream
-      while self.isUp:
-        measuredState = self.stream.read( 200000 )
-        if measuredState != None:
-          self._posChanged.emit( measuredState )
+      with self.stream:
+        while self.isUp:
+          measuredState = self.stream.read( 200000 )
+          if measuredState != None:
+            self._posChanged.emit( measuredState )
     else:
       # use polling
       # cache handles to the relevant parameters

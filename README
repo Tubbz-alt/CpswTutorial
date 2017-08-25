@@ -11,3 +11,8 @@ To generate the tutorial PDF file the following
 programs have to be available on your machine 
   - pdflatex
   - fig2dev
+
+In order to execute any of the examples in the tutorial
+you need to run 'make' first:
+
+  make
