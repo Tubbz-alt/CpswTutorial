@@ -9,4 +9,9 @@ if [ ! -f .git/hooks/post-merge ]; then
 fi
 git submodule update --init --recursive
 echo "INSTALL_DIR=`pwd`" > release.mak
+CONFIG_LOCAL=framework/config.local.mak 
+if [ ! -e $CONFIG_LOCAL] || ! grep -q "ARCHES[ \t]*[=]" $CONFIG_LOCAL; then
+	echo '# Build tutorial for host-arch only' >> $CONFIG_LOCAL
+	echo 'ARCHES=$(HARCH)'                     >> $CONFIG_LOCAL
+fi
 make doc
