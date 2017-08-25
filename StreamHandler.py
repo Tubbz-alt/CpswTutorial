@@ -31,3 +31,9 @@ class StreamHandler(object):
       return (tim, phi, pos)
     else:
       return None
+
+  def __enter__(self):
+    return self.strm_.__enter__()
+
+  def __exit__(self, exc_type, exc_val, traceback):
+    return self.strm_.__exit__(exc_type, exc_val, traceback)
