@@ -72,12 +72,13 @@ CInt2Dbl::createAdapter(IEntryAdapterKey &key, Path path, const std::type_info& 
 #else
 	// This could be prohibited by not delegating to CIntEntryImpl
 	// and either delegating to CEntryImpl (stream interface) or
-	// returning a NULL shared-pointer (no other interfaces).
-	if ( isInterface<Val_Base>(interfaceType) || isInterface<ScalVal_Base>(interfaceType) ) {
-		// still give access to Val_Base and ScalVal_Base
+	// throwing an InterfaceNotImplementedError() (no other interfaces).
+	// DO NOT return a NULL shared-ptr from this routine!
+	if ( isInterface<Val_Base>(interfaceType) ) {
+		// still give access to Val_Base
 		return _createAdapter< shared_ptr<IIntEntryAdapt> >(this, path);
 	}
-	return EntryAdapt();
+	throw InterfaceNotImplementedError("CInt2Dbl does not implement the requested interface");
 #endif
 }
 
