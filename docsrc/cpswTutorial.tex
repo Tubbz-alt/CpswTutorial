@@ -1255,7 +1255,7 @@ The ModelParm class should be trivially simple now.
 Next, edit UdpsrvInterface.py and close to the top modify the \cod{import} 
 command to use ModelParmScaled.py instead of ModelParm.py:
 \begin{verbatim}
-import ModelParmScaled.py as ModelParm
+import ModelParmScaled as ModelParm
 \end{verbatim}
 Launch the TutorialGui.py again and verify that it is working.
 
@@ -1284,22 +1284,22 @@ Check out the `solutions' branch from \git{}.
 
 \begin{thebibliography}{9}
 \bibitem{INSTALL}
-framework/INSTALL[.html],\\
+framework/src/doc/INSTALL[.html],\\
 ``HowTo'' build \cpsw{}.
 \bibitem{userapi}
-framework/cpsw\_api\_user.h,\\
+framework/src/cpsw\_api\_user.h,\\
 The \cpsw{} ``user'' API.
 \bibitem{yaml}
 http://www.yaml.org/spec/1.2/spec.html,\\
 Specification of the \yaml{} syntax.
 \bibitem{yamlDefinition}
-framework/README.yamlDefinition[.html],\\
+framework/src/doc/README.yamlDefinition[.html],\\
 description of \yaml{} as used by \cpsw{}; definition of preprocessor directives.
 \bibitem{myCommand}
-framework/test/cpsw\_myCommand.cc,\\
+framework/src/test/cpsw\_myCommand.cc,\\
 example for implementation of a custom command.
 \bibitem{makefile}
-framework/makefile.template,\\
+framework/src/makefile.template,\\
 template for a makefile using \cpsw{}'s makefile system.
 \bibitem{FWLoader}
 FirmwareLoader,\\
