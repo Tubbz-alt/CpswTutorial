@@ -18,13 +18,14 @@ class PathGrep(pycpsw.PathVisitor):
 
      Starts recursion at 'path' and returns a list of RE matches.
   """
-  def __init__(self, root = None, patt = None):
+  def __init__(self, root = None, patt = None, asPath = False):
     pycpsw.PathVisitor.__init__(self)
     self.level   = 0
     self.result  = []
     self.root    = root
     self.setPatt_( patt )
     self.maxl    = -1
+    self.asPath_ = asPath
 
   def setPatt_(self, patt):
     if patt == None:
@@ -46,7 +47,10 @@ class PathGrep(pycpsw.PathVisitor):
         st+="-{}]".format(to)
       print(st)
     elif self.re_prog.search( path.toString() ) != None:
-      self.result.append(path.toString())
+      if self.asPath_:
+        self.result.append(path.clone())
+      else:
+        self.result.append(path.toString())
     return self.maxl < 0 or self.level < self.maxl
 
   # Visitor method we must implement for CPSW
