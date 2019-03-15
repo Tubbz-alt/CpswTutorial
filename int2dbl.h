@@ -30,10 +30,10 @@ private:
 	uint64_t intOffset_;
 
 protected:
-	static const uint8_t  FRAC_BITS_DFLT = 16;
-	static const double   SCALE_DFLT     = 1.0;
-	static const double   OFF_DFLT       = 0.0;
-	static const uint64_t INTOFF_DFLT    = 0;
+	static const uint8_t  FRAC_BITS_DFLT;
+	static const double   SCALE_DFLT;
+	static const double   OFF_DFLT;
+	static const uint64_t INTOFF_DFLT;
 
 public:
 	// constructors -- support only YAML; no c++ builder API
