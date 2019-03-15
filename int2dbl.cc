@@ -11,6 +11,7 @@
 #include <cpsw_yaml.h>
 #include <stdio.h>
 #include <inttypes.h>
+#include <math.h>
 
 void
 CInt2Dbl::checkArgs()
@@ -196,6 +197,12 @@ CInt2DblAdapt::CInt2DblAdapt(Key &k, Path p, shared_ptr<const CInt2Dbl> ie)
   CInt2Dbl_WOAdapt(k, p, ie)
 {
 } 
+
+const uint8_t  CInt2Dbl::FRAC_BITS_DFLT = 16;
+const double   CInt2Dbl::SCALE_DFLT     = 1.0;
+const double   CInt2Dbl::OFF_DFLT       = 0.0;
+const uint64_t CInt2Dbl::INTOFF_DFLT    = 0;
+
 
 // register this class with the factory
 DECLARE_YAML_FIELD_FACTORY(Int2Dbl);
