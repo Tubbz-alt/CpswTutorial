@@ -53,7 +53,7 @@ CInt2Dbl::dumpYamlPart(YAML::Node &n) const
 
 // create an adapter object (which may contain run-time state data)
 EntryAdapt
-CInt2Dbl::createAdapter(IEntryAdapterKey &key, Path path, const std::type_info& interfaceType) const
+CInt2Dbl::createAdapter(IEntryAdapterKey &key, ConstPath path, const std::type_info& interfaceType) const
 {
 	if ( isInterface<DoubleVal>(interfaceType) ) {
 		if ( RW != getMode() )
@@ -177,19 +177,19 @@ uint64_t    imax   = shft >= 64 ? 0xffffffffffffffff : (((uint64_t)1) << shft) -
 	}
 }
 
-CInt2Dbl_ROAdapt::CInt2Dbl_ROAdapt(Key &k, Path p, shared_ptr<const CInt2Dbl> ie)
+CInt2Dbl_ROAdapt::CInt2Dbl_ROAdapt(Key &k, ConstPath p, shared_ptr<const CInt2Dbl> ie)
 : IIntEntryAdapt(k, p, ie),
   CDoubleVal_ROAdapt(k, p, ie)
 {
 }
 
-CInt2Dbl_WOAdapt::CInt2Dbl_WOAdapt(Key &k, Path p, shared_ptr<const CInt2Dbl> ie)
+CInt2Dbl_WOAdapt::CInt2Dbl_WOAdapt(Key &k, ConstPath p, shared_ptr<const CInt2Dbl> ie)
 : IIntEntryAdapt(k, p, ie),
   CDoubleVal_WOAdapt(k, p, ie)
 {
 }
 
-CInt2DblAdapt::CInt2DblAdapt(Key &k, Path p, shared_ptr<const CInt2Dbl> ie)
+CInt2DblAdapt::CInt2DblAdapt(Key &k, ConstPath p, shared_ptr<const CInt2Dbl> ie)
 : IIntEntryAdapt(k, p, ie),
   CDoubleVal_ROAdapt(k, p, ie),
   CInt2Dbl_ROAdapt(k, p, ie),
