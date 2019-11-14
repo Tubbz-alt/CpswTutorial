@@ -80,14 +80,14 @@ public:
 	//virtual void       loadMyConfigFromYaml(Path p, YAML::Node &) const;
 
 	// create an adapter object (which contains run-time state data)
-	virtual EntryAdapt createAdapter(IEntryAdapterKey &k, Path, const std::type_info&) const;
+	virtual EntryAdapt createAdapter(IEntryAdapterKey &k, ConstPath, const std::type_info&) const;
 
 };
 
 // Adapters could hold run-time state information;
 class CInt2Dbl_ROAdapt: public virtual CDoubleVal_ROAdapt {
 public:
-	CInt2Dbl_ROAdapt(Key &k, Path p, ConstInt2Dbl ie);
+	CInt2Dbl_ROAdapt(Key &k, ConstPath p, ConstInt2Dbl ie);
 
 	virtual void int2dbl(double *dst, uint64_t *src, unsigned n);
 	virtual void dbl2dbl(double *dst, unsigned n);
@@ -96,7 +96,7 @@ public:
 // Adapters could hold run-time state information;
 class CInt2Dbl_WOAdapt: public virtual CDoubleVal_WOAdapt {
 public:
-	CInt2Dbl_WOAdapt(Key &k, Path p, ConstInt2Dbl ie);
+	CInt2Dbl_WOAdapt(Key &k, ConstPath p, ConstInt2Dbl ie);
 
 	virtual void dbl2int(uint64_t *dst, double *src, unsigned n);
 	virtual void dbl2dbl(double *dst, unsigned n);
@@ -104,7 +104,7 @@ public:
 
 class CInt2DblAdapt: public virtual CInt2Dbl_ROAdapt, public virtual CInt2Dbl_WOAdapt, public virtual IDoubleVal {
 public:
-	CInt2DblAdapt(Key &k, Path p, ConstInt2Dbl ie);
+	CInt2DblAdapt(Key &k, ConstPath p, ConstInt2Dbl ie);
 };
 
 #endif
