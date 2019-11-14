@@ -22,7 +22,7 @@ class ModelParm(object):
   # convert floating-point to scaled representation
   # (conversion already done by the Int2Dbl c++ object)
   def setVal(self, val):
-    self.val_.setVal(val)
+    self.val_.setVal( float(val) )
 
   def getDescription(self):
     return self.val_.getDescription()
