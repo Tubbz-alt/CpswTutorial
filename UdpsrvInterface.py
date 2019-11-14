@@ -5,7 +5,7 @@ import threading
 
 import ModelParm as ModelParm
 
-from PyQt4 import QtCore
+from PyQt5 import QtCore
 
 # Interface to pendulum module in udpsrv; use CPSW to access
 
