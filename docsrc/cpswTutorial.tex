@@ -115,10 +115,8 @@ First, you need to point the makefile to the locations where the libraries used 
 \item \cod{boost}
 \item \cod{\py}
 \end{itemize}
-For the installation at SLAC, the relevant locations of \cod{yaml-cpp} and \cod{boost}
-are already defined in the file \cod{config.mak} (in the \cod{framework} subdirectory).
-However, at the time of this writing the location of \cod{\py} has not been defined
-and we shall do that now.
+For the installation at SLAC, the relevant locations of \cod{yaml-cpp}, \cod{boost} and
+\cod{\py} are already defined in the file \cod{config.mak} (in the \cod{framework} subdirectory).
 
 It is also important that later, when you launch \py{}, you use the same version
 of the \py{} interpreter that was used to build the \py{} \cpsw{} module.
@@ -136,10 +134,6 @@ snippet of code to be properly typeset without producing overfull lines.}
 \begin{verbatim}
 INSTALL_DIR=$(CPSW_DIR)/../
 ARCHES=$(HARCH)
-define py_DIR_default
-/afs/slac/g/lcls/package/python/python2.7.9/$(TARCH)
-endef
-pyinc_DIR_default=$(py_DIR)/include/python2.7
 \end{verbatim}
 
 Now you can change back to the tutorial's top directory and type \cod{make install}.
@@ -150,7 +144,10 @@ makefile system (\cite{INSTALL, makefile}).
 We will now discuss how \cpsw{}'s \py{} interface can be loaded. In order for
 \py{} to be able to find this interface you need to point the environment variable
 \cod{PYTHONPATH} to the location where \cod{pycpsw.so} is installed
-(\cod{<top>/bin/linux-x86\_64}).
+(\cod{<top>/<host-architecture>/bin/}).%
+\footnote{\cod{<host-architecture>} -- which is referred to from various places in this
+document -- is the name of the {\em host architecture} and may vary
+for your installation; e.g., at the time of this writing SLAC used \cod{rhel6-x86\_64}.}
 
 Because \cpsw{} requires other libraries (most notably \cod{yaml-cpp} and \cod{boost})
 the run-time linker must also be able to find these libraries which is normally
@@ -201,7 +198,7 @@ been mentioned already. Open a new terminal, change directory to the tutorial's
 top and type
 \begin{verbatim}
 . env.slac
-bin/linux-x86_64/udpsrv -T 8400
+<host-architecture>/bin/udpsrv -T 8400
 \end{verbatim}
 The server will open UDP port 8400 where it is listening for requests. Because
 only a single program may listen on a given port this means that only a single
@@ -325,11 +322,13 @@ packages' \cod{partial} feature to check whether the `here' Path could potential
 and let \cod{visitPre} return \cod{False} if this is not the case).
 
 \begin{verbatim}
->>> import pathGrep as pg 
->>> pg.pgrep(root,None)
+>>> import pathGrep
+>>> pg = pathGrep.PathGrep(root)
+>>> pg()
 \end{verbatim}
 
-will print the entire hierarchy.
+will print the entire hierarchy. A {\em regex} pattern can be supplied as an argument if
+you want to search for particular paths.
 
 \subsection{Entries and Hubs}
 Every object in the \cpsw{} hierarchy is represented by an {\em \entry{}}. \entry{} presents
@@ -922,8 +921,8 @@ Since we are dealing with three 64-bit numbers we create an array of quads:
 \end{verbatim}
 and read from the stream (the return value is the number of bytes read):
 \begin{verbatim}
->>> with strm:
-...   strm.read(data)
+>>> with strm as s:
+...   s.read(data)
 ...
 24
 \end{verbatim}
@@ -956,7 +955,7 @@ individual steps inside \cod{with} interactively. To that end we start a
 sub-interpreter:
 \begin{verbatim}
 import code
-with strm:
+with strm as s:
 ...  code.interact(local=locals())
 ...
 \end{verbatim}
