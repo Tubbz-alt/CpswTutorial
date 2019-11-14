@@ -3,7 +3,7 @@
 import sys
 import signal
 import numpy
-from   PyQt4 import Qt, QtGui, QtCore
+from   PyQt5 import Qt, QtGui, QtCore, QtWidgets
 
 # Import the pendulum model - this is a class which is supposed to 
 # provide the following methods
@@ -30,7 +30,7 @@ import UdpsrvInterface as Pendmod
 #import pendmod as Pendmod
 
 # Class which connects a parameter from the model to a QLineEdit widget
-class ParmField(QtGui.QLineEdit):
+class ParmField(QtWidgets.QLineEdit):
 
   def __init__(self, nam, modl, parent=None):
     super(ParmField,self).__init__(parent)
@@ -39,10 +39,12 @@ class ParmField(QtGui.QLineEdit):
     self.setValidator( QtGui.QDoubleValidator() )
     self.setText( '{:f}'.format( modl.getParm(nam) ) )
     # returnPressed is only emitted if the string passes validation
-    QtCore.QObject.connect( self, QtCore.SIGNAL("returnPressed()"),   self.updateVal )
+    self.returnPressed.connect( self.updateVal )
+    #Qt4: QtCore.QObject.connect( self, QtCore.SIGNAL("returnPressed()"),   self.updateVal )
     # editingFinished is emitted after returnPressed or lost focus (with valid string)
     # if we lose focus w/o return being hit then we restore the original string
-    QtCore.QObject.connect( self, QtCore.SIGNAL("editingFinished()"), self.restoreTxt  )
+    self.editingFinished.connect( self.restoreTxt )
+    #Qt4: QtCore.QObject.connect( self, QtCore.SIGNAL("editingFinished()"), self.restoreTxt  )
  
   # the user entered a new value into the GUI; propagate to the model
   def updateVal(self):
@@ -54,7 +56,7 @@ class ParmField(QtGui.QLineEdit):
    
 
 # Pendulum GUI. Pass a reference to the model.
-class Pend(QtGui.QFrame):
+class Pend(QtWidgets.QFrame):
 
   def __init__(self, modl, parent=None, flags=QtCore.Qt.WindowFlags()):
     super(Pend,self).__init__( parent, flags )
@@ -86,7 +88,7 @@ class Pend(QtGui.QFrame):
     self.ldx_       = 0.
     self.kCorr_     = numpy.array([-5.24,-3.2,.3125,1.269])
     self.setLineWidth(2)
-    self.setFrameStyle( QtGui.QFrame.Panel | QtGui.QFrame.Sunken )
+    self.setFrameStyle( QtWidgets.QFrame.Panel | QtWidgets.QFrame.Sunken )
     self.setMinimumSize(self.winw, self.winh)
     modl._posChanged.connect( self.updatePos )
 
@@ -199,26 +201,26 @@ def addField(form, fieldName, modl):
   
 def main():
   signal.signal( signal.SIGINT, signal.SIG_DFL )
-  app  = QtGui.QApplication(sys.argv)
-  vbox = QtGui.QVBoxLayout()
+  app  = QtWidgets.QApplication(sys.argv)
+  vbox = QtWidgets.QVBoxLayout()
   modl = Pendmod.Model(50, .4)
-  form = QtGui.QFormLayout()
+  form = QtWidgets.QFormLayout()
   addField(form, "vFriction", modl)
   addField(form, "gOverL"   , modl)
   addField(form, "mOverM"   , modl)
   addField(form, "iniVelo"  , modl)
-  formw = QtGui.QWidget()
+  formw = QtWidgets.QWidget()
   formw.setLayout( form )
   vbox.addWidget( formw )
-  vbox.addWidget( QtGui.QLabel("Click in pendulum area to re-initialize position"),
+  vbox.addWidget( QtWidgets.QLabel("Click in pendulum area to re-initialize position"),
                   alignment=QtCore.Qt.AlignHCenter )
   vbox.addWidget( Pend(modl), alignment=QtCore.Qt.AlignHCenter )
   strmErr = modl.getStreamErrorState()
   if strmErr:
-    vbox.addWidget( QtGui.QLabel("Mode: Polled; " + strmErr) )
+    vbox.addWidget( QtWidgets.QLabel("Mode: Polled; " + strmErr) )
   else:
-    vbox.addWidget( QtGui.QLabel("Mode: Streaming") )
-  top = QtGui.QWidget()
+    vbox.addWidget( QtWidgets.QLabel("Mode: Streaming") )
+  top = QtWidgets.QWidget()
   top.setLayout( vbox )
   top.setWindowTitle("Pendulum on Cart")
   top.show()
